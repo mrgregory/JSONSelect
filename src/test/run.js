@@ -41,8 +41,7 @@ function runOneSync(name, selname, p) {
 
 
 function runTests() {
-    console.log("you are here");
-    console.log("Running Tests:asdfdsf"); 
+    console.log("Running Tests:"); 
     for (var l in tests) {
         for (var d in tests[l]) {
             console.log("  level " + l + " tests against \"" + d + ".json\":");
