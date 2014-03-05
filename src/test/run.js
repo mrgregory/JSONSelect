@@ -9,7 +9,7 @@ const   fs = require('fs'),
 jsonselect = require('../jsonselect.js'),
        sys = require('sys');
 
-var pathToTests = path.join(__dirname, "tests");
+var pathToTests = path.join(__dirname, "JSONSelectTests");
 
 // a map: document nametest name -> list of se
 var numTests = 0;
@@ -62,7 +62,7 @@ function runTests() {
 }
 
 // discover all tests
-var pathToTests = path.join(__dirname, "tests");
+var pathToTests = path.join(__dirname, "JSONSelectTests");
 
 fs.readdirSync(pathToTests).forEach(function(subdir) {
     var p = path.join(pathToTests, subdir);

@@ -144,12 +144,14 @@
             // (2) numbers
             "(-?\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?)|" +
             // (3) strings
-            "(\"(?:[^\\&]|\\[^\"])*\")|" +
+            "(\"(?:[^\\]|\\[^\"])*\")|" +
             // (4) the 'x' value placeholder
             "(x)|" +
-            // (5) binops
-            "(&&|\\|\\||[\\$\\^<>!\\*\\-\\%]=|[\\!]%|[=+\\-*/%<>])|" +
-            // (6) parens
+            // (5) accept regex expression as value
+            "(\"\\[0-9\\]\"|\"\\[a-z\\]\")|" +
+            // (6) binops
+            "(&&|\\|\\||[\\$\\^<>!\\*\\-\\%]=|[=+\\-*/%<>])|" +
+            // (7) parens
             "([\\(\\)])" +
             ")"
     );
@@ -167,8 +169,9 @@
         '^=': [ 5, function(lhs, rhs) { return is(lhs, 'string') && is(rhs, 'string') && lhs.indexOf(rhs) === 0; } ],
         '*=': [ 5, function(lhs, rhs) { return is(lhs, 'string') && is(rhs, 'string') && lhs.indexOf(rhs) !== -1; } ],
         '-=': [ 5, function(lhs, rhs) { return is(lhs, 'string') && is(rhs, 'string') && lhs.indexOf(rhs) === -1; } ],
-        '%=': [ 5, function(lhs, rhs) { return typeof lhs !== "object" && RegExp(rhs).exec(lhs) != null} ],
-        '!%': [ 5, function(lhs, rhs) { return typeof lhs !== "object" && RegExp(rhs).exec(lhs) == null} ],
+        //'%=': [ 5, function(lhs, rhs) { var pattern = new RegExp("^[a-zA-Z]+[0-9]+$"); return pattern.exec(lhs) } ],
+        //'%=': [ 5, function(lhs, rhs) { var pattern = new RegExp("^\\d+$"); return pattern.exec(lhs) } ],
+        '%=': [ 5, function(lhs, rhs) { var pattern = new RegExp(rhs); return pattern.exec(lhs) } ],
         '>':  [ 5, function(lhs, rhs) { return is(lhs, 'number') && is(rhs, 'number') && lhs > rhs || is(lhs, 'string') && is(rhs, 'string') && lhs > rhs; } ],
         '<':  [ 5, function(lhs, rhs) { return is(lhs, 'number') && is(rhs, 'number') && lhs < rhs || is(lhs, 'string') && is(rhs, 'string') && lhs < rhs; } ],
         '=':  [ 3, function(lhs, rhs) { return lhs === rhs; } ],
@@ -178,37 +181,54 @@
     };
 
     function exprLex(str, off) {
+        console.log("exprlex str, off, substr", str, off, str.substr(off));
+        console.log("substr = ", str.substr(off));
+        console.log("exprPat = ", exprPat);
         var v, m = exprPat.exec(str.substr(off));
+        console.log("m = ", m);
         if (m) {
             off += m[0].length;
-            v = m[1] || m[2] || m[3] || m[5] || m[6];
-            if (m[1] || m[2] || m[3]) return [off, 0, jsonParse(v)];
+            v = m[1] || m[2] || m[3] || m[5] || m[6] || m[7];
+            console.log("v =", v);
+            if (m[1] || m[2] || m[3] || m[5] ) return [off, 0, jsonParse(v)];
             else if (m[4]) return [off, 0, undefined];
             return [off, v];
         }
     }
 
     function exprParse2(str, off) {
+        console.log("str , off, lhs = ", str, off, lhs);
         if (!off) off = 0;
         // first we expect a value or a '('
+            console.log('check this = ', exprLex(str, off));
+            console.log(lhs);
+            //console.log(exprLex(str, off), lhs);
         var l = exprLex(str, off),
             lhs;
-        
+        console.log("l = ", l);
+
         if (l && l[1] === '(') {
+            console.log('here 1');
             lhs = exprParse2(str, l[0]);
+           console.log("lhs = ", lhs);
             var p = exprLex(str, lhs[0]);
             if (!p || p[1] !== ')') te('epex', str);
             off = p[0];
             lhs = [ '(', lhs[1] ];
         } else if (!l || (l[1] && l[1] != 'x')) {
+            console.log('here 2');
             te("ee", str + " - " + ( l[1] && l[1] ));
         } else {
+            console.log('here 3');
             lhs = ((l[1] === 'x') ? undefined : l[2]);
             off = l[0];
         }
 
         // now we expect a binary operator or a ')'
+console.log('here 4');
         var op = exprLex(str, off);
+        console.log('here 5');
+        console.log('op = ', op);
         if (!op || op[1] == ')') return [off, lhs];
         else if (op[1] == 'x' || !op[1]) {
             te('bop', str + " - " + ( op[1] && op[1] ));
@@ -497,17 +517,13 @@
     }
 
     function forEach(sel, obj, fun, id, num, tot) {
-        //console.log("obj = ", obj);
         var a = (sel[0] === ",") ? sel.slice(1) : [sel],
         a0 = [],
         call = false,
         i = 0, j = 0, k, x;
         for (i = 0; i < a.length; i++) {
-            //console.log("mn = ", obj, a[i], id, num, tot);
             x = mn(obj, a[i], id, num, tot);
-            //console.log("x = ", x);
             if (x[0]) {
-                //console.log("x[0] = ", x[0]);
                 call = true;
             }
             for (j = 0; j < x[1].length; j++) {
@@ -531,8 +547,6 @@
             }
         }
         if (call && fun) {
-            ////console.log("inside call fun = ", obj, call);
-            //console.log("call = ", call);
             fun(obj);
         }
     }
