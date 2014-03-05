@@ -497,17 +497,13 @@
     }
 
     function forEach(sel, obj, fun, id, num, tot) {
-        //console.log("obj = ", obj);
         var a = (sel[0] === ",") ? sel.slice(1) : [sel],
         a0 = [],
         call = false,
         i = 0, j = 0, k, x;
         for (i = 0; i < a.length; i++) {
-            //console.log("mn = ", obj, a[i], id, num, tot);
             x = mn(obj, a[i], id, num, tot);
-            //console.log("x = ", x);
             if (x[0]) {
-                //console.log("x[0] = ", x[0]);
                 call = true;
             }
             for (j = 0; j < x[1].length; j++) {
@@ -531,8 +527,6 @@
             }
         }
         if (call && fun) {
-            ////console.log("inside call fun = ", obj, call);
-            //console.log("call = ", call);
             fun(obj);
         }
     }
