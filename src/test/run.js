@@ -9,7 +9,7 @@ const   fs = require('fs'),
 jsonselect = require('../jsonselect.js'),
        sys = require('sys');
 
-var pathToTests = path.join(__dirname, "JSONSelectTests");
+var pathToTests = path.join(__dirname, "tests");
 
 // a map: document nametest name -> list of se
 var numTests = 0;
