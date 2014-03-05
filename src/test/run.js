@@ -9,7 +9,7 @@ const   fs = require('fs'),
 jsonselect = require('../jsonselect.js'),
        sys = require('sys');
 
-var pathToTests = path.join(__dirname, "tests");
+var pathToTests = path.join(__dirname, "JSONSelectTests");
 
 // a map: document nametest name -> list of se
 var numTests = 0;
@@ -41,7 +41,8 @@ function runOneSync(name, selname, p) {
 
 
 function runTests() {
-    console.log("Running Tests:"); 
+    console.log("you are here");
+    console.log("Running Tests:asdfdsf"); 
     for (var l in tests) {
         for (var d in tests[l]) {
             console.log("  level " + l + " tests against \"" + d + ".json\":");
@@ -62,7 +63,7 @@ function runTests() {
 }
 
 // discover all tests
-var pathToTests = path.join(__dirname, "tests");
+var pathToTests = path.join(__dirname, "JSONSelectTests");
 
 fs.readdirSync(pathToTests).forEach(function(subdir) {
     var p = path.join(pathToTests, subdir);
