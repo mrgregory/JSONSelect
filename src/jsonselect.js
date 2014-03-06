@@ -248,12 +248,11 @@
         return [e[0], deparen(e[1])];
     }
 
-    var  caseSensitivityConversion = function(val) { return (!caseSensitive && typeof(val) === 'string')?  val.toLowerCase() : val }
-
     function exprEval(expr, x) {
         if (expr === undefined) return x;
         else if (expr === null || typeof expr !== 'object') {
-            return (typeof(expr) === 'string' && !caseSensitive) ? caseSensitivityConversion(expr) : expr;
+            //return (typeof(expr) === 'string' && !caseSensitive) ? caseSensitivityConversion(expr) : expr;
+            return (typeof(expr) === 'string' && !caseSensitive) ? expr : expr;
         }
         var lhs = exprEval(expr[0], x),
             rhs = exprEval(expr[2], x);
@@ -556,8 +555,12 @@
         return sel;
     }
 
+    var  caseSensitivityConversion = function(val) { return (!caseSensitive && typeof(val) === 'string')?  val.toLowerCase() : val }
+
+
     function compile(sel, arr) {
         if (arr) sel = format(sel, arr);
+        sel = caseSensitivityConversion(sel);
         return {
             sel: parse(sel)[1],
             match: function(obj){
