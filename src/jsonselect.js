@@ -39,8 +39,9 @@
  *   For cases where a complex selector is repeatedly used, this method
  *   should be faster as it will avoid recompiling the selector each time.
  */
+ 
 (function(exports) {
-
+ var caseSensitive = false;   
     var // localize references
     toString = Object.prototype.toString;
 
@@ -148,13 +149,16 @@
             // (4) the 'x' value placeholder
             "(x)|" +
             // (5) binops
-            "(&&|\\|\\||[\\$\\^<>!\\*\\-\\%]=|[\\!]%|[=+\\-*/%<>])|" +
+            "(&&|\\|\\||[\\$\\^<>!\\*\\%]=|[\\!]%|[=+\\-*/%<>])|" +
             // (6) parens
             "([\\(\\)])" +
             ")"
     );
 
     function is(o, t) { return typeof o === t; }
+    
+        
+    
     var operators = {
         '*':  [ 9, function(lhs, rhs) { return lhs * rhs; } ],
         '/':  [ 9, function(lhs, rhs) { return lhs / rhs; } ],
@@ -166,7 +170,6 @@
         '$=': [ 5, function(lhs, rhs) { return is(lhs, 'string') && is(rhs, 'string') && lhs.lastIndexOf(rhs) === lhs.length - rhs.length; } ],
         '^=': [ 5, function(lhs, rhs) { return is(lhs, 'string') && is(rhs, 'string') && lhs.indexOf(rhs) === 0; } ],
         '*=': [ 5, function(lhs, rhs) { return is(lhs, 'string') && is(rhs, 'string') && lhs.indexOf(rhs) !== -1; } ],
-        '-=': [ 5, function(lhs, rhs) { return is(lhs, 'string') && is(rhs, 'string') && lhs.indexOf(rhs) === -1; } ],
         '%=': [ 5, function(lhs, rhs) { return typeof lhs !== "object" && RegExp(rhs).exec(lhs) != null} ],
         '!%': [ 5, function(lhs, rhs) { return typeof lhs !== "object" && RegExp(rhs).exec(lhs) == null} ],
         '>':  [ 5, function(lhs, rhs) { return is(lhs, 'number') && is(rhs, 'number') && lhs > rhs || is(lhs, 'string') && is(rhs, 'string') && lhs > rhs; } ],
@@ -247,10 +250,12 @@
     function exprEval(expr, x) {
         if (expr === undefined) return x;
         else if (expr === null || typeof expr !== 'object') {
-            return expr;
+            //return (typeof(expr) === 'string' && !caseSensitive) ? caseSensitivityConversion(expr) : expr;
+            return (typeof(expr) === 'string' && !caseSensitive) ? expr : expr;
         }
         var lhs = exprEval(expr[0], x),
             rhs = exprEval(expr[2], x);
+        
         return operators[expr[1]][1](lhs, rhs);
     }
 
@@ -549,8 +554,12 @@
         return sel;
     }
 
+    var  caseSensitivityConversion = function(val) { return (!caseSensitive && typeof(val) === 'string')?  val.toLowerCase() : val }
+
+
     function compile(sel, arr) {
         if (arr) sel = format(sel, arr);
+        sel = caseSensitivityConversion(sel);
         return {
             sel: parse(sel)[1],
             match: function(obj){
@@ -562,10 +571,13 @@
         };
     }
 
+
     exports._lex = lex;
     exports._parse = parse;
-    exports.match = function (sel, arr, obj) {
-        if (!obj) { obj = arr; arr = undefined; }
+    exports.match = function (sel, arr, obj, optionalIsCaseSensitive) {
+        if(!obj && typeof(obj) !== 'boolean' && !optionalIsCaseSensitive) { obj = arr; arr = undefined; }
+        if(typeof(obj) === 'boolean' ) { optionalIsCaseSensitive = obj; obj = arr; arr = undefined;}
+        caseSensitive = (optionalIsCaseSensitive !== undefined && optionalIsCaseSensitive === false) ? optionalIsCaseSensitive : true;
         return compile(sel, arr).match(obj);
     };
     exports.forEach = function(sel, arr, obj, fun) {
