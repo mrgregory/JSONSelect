@@ -149,7 +149,7 @@
             // (4) the 'x' value placeholder
             "(x)|" +
             // (5) binops
-            "(&&|\\|\\||[\\$\\^<>!\\*\\-\\%]=|[\\!]%|[=+\\-*/%<>])|" +
+            "(&&|\\|\\||[\\$\\^<>!\\*\\%]=|[\\!]%|[=+\\-*/%<>])|" +
             // (6) parens
             "([\\(\\)])" +
             ")"
@@ -170,10 +170,9 @@
         '$=': [ 5, function(lhs, rhs) { return is(lhs, 'string') && is(rhs, 'string') && lhs.lastIndexOf(rhs) === lhs.length - rhs.length; } ],
         '^=': [ 5, function(lhs, rhs) { return is(lhs, 'string') && is(rhs, 'string') && lhs.indexOf(rhs) === 0; } ],
         '*=': [ 5, function(lhs, rhs) { return is(lhs, 'string') && is(rhs, 'string') && lhs.indexOf(rhs) !== -1; } ],
-        '-=': [ 5, function(lhs, rhs) { return is(lhs, 'string') && is(rhs, 'string') && lhs.indexOf(rhs) === -1; } ],
         '%=': [ 5, function(lhs, rhs) { return typeof lhs !== "object" && RegExp(rhs).exec(lhs) != null} ],
         '!%': [ 5, function(lhs, rhs) { return typeof lhs !== "object" && RegExp(rhs).exec(lhs) == null} ],
-        '>':  [ 5, function(lhs, rhs) { console.log("asdfsd"); return is(lhs, 'number') && is(rhs, 'number') && lhs > rhs || is(lhs, 'string') && is(rhs, 'string') && lhs > rhs; } ],
+        '>':  [ 5, function(lhs, rhs) { return is(lhs, 'number') && is(rhs, 'number') && lhs > rhs || is(lhs, 'string') && is(rhs, 'string') && lhs > rhs; } ],
         '<':  [ 5, function(lhs, rhs) { return is(lhs, 'number') && is(rhs, 'number') && lhs < rhs || is(lhs, 'string') && is(rhs, 'string') && lhs < rhs; } ],
         '=':  [ 3, function(lhs, rhs) { return lhs === rhs; } ],
         '!=': [ 3, function(lhs, rhs) { return lhs !== rhs; } ],
