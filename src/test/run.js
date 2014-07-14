@@ -62,7 +62,7 @@ function runTests() {
 }
 
 // discover all tests
-var pathToTests = path.join(__dirname, "tests");
+var pathToTests = path.join(__dirname, "JSONSelectTests");
 
 fs.readdirSync(pathToTests).forEach(function(subdir) {
     var p = path.join(pathToTests, subdir);
