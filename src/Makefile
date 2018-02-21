@@ -13,7 +13,7 @@ SRC = ${SRC_DIR}/jsonselect.js
 DIST = ${DIST_DIR}/jsonselect.js
 DIST_MIN = ${DIST_DIR}/jsonselect.min.js
 
-all: hint project min tests
+all: hint project min
 	@@echo "Project build complete."
 
 ${DIST_DIR}:
@@ -49,20 +49,6 @@ hint:
 	fi
 
 
-test/tests/README.md: 
-	@@cd .. && git submodule init 
-	@@cd .. && git submodule update 
-
-
-tests: test/tests/README.md
-	@@if test ! -z ${JS_ENGINE}; then \
-		echo "Testing Project"; \
-		${JS_ENGINE} test/run.js; \
-	else \
-		echo "nodejs is missing"; \
-	fi
-
-
 clean:
 	@@echo "Removing Distribution directory:" ${DIST_DIR}
 	@@rm -rf ${DIST_DIR}
@@ -70,4 +56,4 @@ clean:
 
 
 
-.PHONY: all project hint min tests
+.PHONY: all project hint min
