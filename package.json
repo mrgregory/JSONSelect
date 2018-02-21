@@ -2,11 +2,11 @@
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
   "name": "JSONSelect",
   "description": "CSS-like selectors for JSON",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "homepage": "http://jsonselect.org",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lloyd/JSONSelect.git"
+    "url": "https://github.com/mrgregory/JSONSelect.git"
   },
   "main": "src/jsonselect",
   "engines": {
@@ -15,11 +15,10 @@
   "dependencies": {},
   "devDependencies": {},
   "scripts": {
-    "test": "node src/test/run.js"
   },
-  "bugs": "https://github.com/lloyd/JSONSelect/issues",
+  "bugs": "https://github.com/mrgregory/JSONSelect/issues",
   "licenses": {
     "type": "MIT",
-    "url": "https://raw.github.com/lloyd/JSONSelect/master/LICENSE"
+    "url": "https://raw.github.com/mrgregory/JSONSelect/master/LICENSE"
   }
 }
